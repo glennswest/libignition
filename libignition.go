@@ -51,11 +51,12 @@ import(
 
 
 
-func main(){
-  parse_ignition_file("./ignition-test.json");
-}
+//Example:
+//func main(){
+//  parse_ignition_file("./ignition-test.json");
+//}
 
-func parse_ignition_string(tc string) int {
+func Parse_ignition_string(tc string) int {
 	version := gjson.Get(tc, "ignition.version");
         if (version.String() == ""){
            fmt.Printf("Invalid file");
@@ -111,7 +112,7 @@ func parse_ignition_string(tc string) int {
         return(0);
 }
 
-func parse_ignition_file(thefilepath string) int {
+func Parse_ignition_file(thefilepath string) int {
 
     b, err :=ioutil.ReadFile(thefilepath);
     if err != nil {
@@ -119,7 +120,7 @@ func parse_ignition_file(thefilepath string) int {
       return 0;
       }
     content := string(b);
-    result := parse_ignition_string(content);
+    result := Parse_ignition_string(content);
     return(result);
 
 }
