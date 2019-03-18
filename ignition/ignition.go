@@ -59,7 +59,7 @@ import(
 //  parse_ignition_file("./ignition-test.json");
 //}
 
-const ignition_base_json string = `
+const ignition_base_json string = `{
   "ignition": { "version": "2.2.0" },
   "storage": {
     "files": []
@@ -104,7 +104,14 @@ func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath 
         if (file_is_exists(jsonpath) == false){
            New_ignition_file(jsonpath)
            }
-	content, err := ioutil.ReadFile(jsonpath)
+	jsb, err := ioutil.ReadFile(jsonpath)
+	if (err != nil) {
+                log.Printf("Add_base64_file: Failed to read json(%s) - %s->%s\n",err,jsonpath, filetoadd, destpath)
+		return(-1)
+                }
+        js := string(jsb)
+
+	content, err := ioutil.ReadFile(filetoadd)
 	if (err != nil) {
                 log.Printf("Add_base64_file: Failed(%s) - %s->%s\n",err,jsonpath, filetoadd, destpath)
 		return(-1)
@@ -120,10 +127,10 @@ func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath 
                 }`
        sjson.Set(je,"path",destpath)
        sjson.Set(je,"contents.source","data:text/plain;charset=utf-8;base64," + bcontent)
-       idx := Find_storage_idx(bcontent,destpath)
+       idx := Find_storage_idx(js,destpath)
        vname := "storage.files." + strconv.Itoa(idx)
-       sjson.Set(bcontent, vname, je)
-       d := []byte(bcontent)
+       sjson.Set(js, vname, je)
+       d := []byte(js)
        err = ioutil.WriteFile(jsonpath, d, 0644)
        if (err != nil){
            log.Printf("Error: Add_base64_file %s Failed - %s\n",jsonpath,err)
