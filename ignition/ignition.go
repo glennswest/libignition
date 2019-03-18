@@ -1,4 +1,4 @@
-package main;
+package ignition;
   
 import(
             "os"
@@ -10,7 +10,10 @@ import(
             "path/filepath"
             "encoding/base64"
             "github.com/tidwall/gjson"
+            "github.com/tidwall/sjson"
             "net/http"
+            "strconv"
+            "log"
         )
 
 // Examples
@@ -55,6 +58,62 @@ import(
 //func main(){
 //  parse_ignition_file("./ignition-test.json");
 //}
+
+const ignition_base_json string = `
+  "ignition": { "version": "2.2.0" },
+  "storage": {
+    "files": []
+  }
+}`
+
+func New_ignition_file(path string) int {
+	tdir := filepath.Dir(path)
+        os.MkdirAll(tdir,os.ModePerm)
+        td := []byte(ignition_base_json)
+        err := ioutil.WriteFile(path, td, 0644)
+        if (err != nil){
+           log.Printf("Error: New_ignition_file %s Failed - %s\n",path,err)
+           return(-1)
+           }
+        return(1)
+}
+
+func Find_storage_idx(tc string,destpath string) int {
+
+        result := gjson.Get(tc,"storage.files");
+        files := result.Array();
+        for idx,tfile := range files {
+            tpath := gjson.Get(tfile.String(),"path").String()
+            if (tpath == destpath){
+               return(idx)
+               }
+            }
+        return(-1) // For append
+}
+
+func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath string) int {
+	content, err := ioutil.ReadFile(jsonpath)
+	if (err != nil) {
+                log.Printf("Add_base64_file: Failed(%s) - %s->%s\n",err,jsonpath, filetoadd, destpath)
+		return(-1)
+                }
+        bcontent := base64.StdEncoding.EncodeToString(content)
+        je := `{"filesystem": "",
+                "path": "",
+                "mode": 420,
+                "contents" : {
+                  "source" : "",
+                  "verification" : {}
+                  }
+                }`
+       sjson.Set(je,"path",destpath)
+       sjson.Set(je,"contents.source","data:text/plain;charset=utf-8;base64," + bcontent)
+       idx := Find_storage_idx(bcontent,destpath)
+       vname := "storage.files." + strconv.Itoa(idx)
+       sjson.Set(bcontent, vname, je)
+       return(0)
+}
+
 
 func Parse_ignition_string(tc string) int {
 	version := gjson.Get(tc, "ignition.version");
