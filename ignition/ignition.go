@@ -16,49 +16,6 @@ import(
             "log"
         )
 
-// Examples
-//{
-//  "ignition": { "version": "2.2.0" },
-//  "storage": {
-//    "files": [{
-//      "filesystem": "root",
-//      "path": "/foo/bar",
-//      "mode": 420,
-//      "contents": { "source": "data:,example%20file%0A" }
-//    }]
-//  }
-//}
-//{
-//  "ignition": { "version": "2.2.0" },
-//  "storage": {
-//    "files": [{
-//      "filesystem": "root",
-//      "path": "/foo/bar",
-//      "mode": 420,
-//      "contents": {
-//        "source": "http://example.com/asset",
-//        "verification": { "hash": "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" }
-//      }
-//    }]
-//  }
-//}
-//    {
-//        "filesystem" : "root",
-//        "path" : "./foo/motd",
-//        "mode" : 420,
-//        "contents" : {
-//          "source" : "data:text/plain;charset=utf-8;base64,VGhpcyBpcyB0aGUgYm9vdHN0cmFwIG5vZGU7IGl0IHdpbGwgYmUgZGVzdHJveWVkIHdoZW4gdGhlIG1hc3RlciBpcyBmdWxseSB1cC4KClRoZSBwcmltYXJ5IHNlcnZpY2UgaXMgImJvb3RrdWJlLnNlcnZpY2UiLiBUbyB3YXRjaCBpdHMgc3RhdHVzLCBydW4gZS5nLgoKICBqb3VybmFsY3RsIC1iIC1mIC11IGJvb3RrdWJlLnNlcnZpY2UK",
-//          "verification" : {}
-//        }
-//      }
-
-
-
-//Example:
-//func main(){
-//  parse_ignition_file("./ignition-test.json");
-//}
-
 const ignition_base_json string = `{
   "ignition": { "version": "2.2.0" },
   "storage": {
@@ -72,6 +29,14 @@ func file_is_exists(f string) bool {
         return false
     }
     return err == nil
+}
+
+func IsDirectory(path string) (bool) {
+    fileInfo, err := os.Stat(path)
+    if err != nil{
+      return false
+    }
+    return fileInfo.IsDir()
 }
 
 func New_ignition_file(path string) int {
@@ -101,6 +66,13 @@ func Find_storage_idx(tc string,destpath string) int {
 
 func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath string) int {
 
+        if (IsDirectory(filetoadd)){
+           filepath.Walk(filetoadd, func(path string, info os.FileInfo, err error) error {
+                                        Add_base64_file(jsonpath,path,destfs,path)
+                                        return nil
+                                                 })
+           return 0
+           }
         if (file_is_exists(jsonpath) == false){
            New_ignition_file(jsonpath)
            }
