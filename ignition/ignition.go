@@ -66,6 +66,14 @@ const ignition_base_json string = `
   }
 }`
 
+func file_is_exists(f string) bool {
+    _, err := os.Stat(f)
+    if os.IsNotExist(err) {
+        return false
+    }
+    return err == nil
+}
+
 func New_ignition_file(path string) int {
 	tdir := filepath.Dir(path)
         os.MkdirAll(tdir,os.ModePerm)
@@ -92,6 +100,10 @@ func Find_storage_idx(tc string,destpath string) int {
 }
 
 func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath string) int {
+
+        if (file_is_exists(jsonpath) == false){
+           New_ignition_file(jsonpath)
+           }
 	content, err := ioutil.ReadFile(jsonpath)
 	if (err != nil) {
                 log.Printf("Add_base64_file: Failed(%s) - %s->%s\n",err,jsonpath, filetoadd, destpath)
@@ -111,6 +123,12 @@ func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath 
        idx := Find_storage_idx(bcontent,destpath)
        vname := "storage.files." + strconv.Itoa(idx)
        sjson.Set(bcontent, vname, je)
+       d := []byte(bcontent)
+       err = ioutil.WriteFile(jsonpath, d, 0644)
+       if (err != nil){
+           log.Printf("Error: Add_base64_file %s Failed - %s\n",jsonpath,err)
+           return(-1)
+           }
        return(0)
 }
 
