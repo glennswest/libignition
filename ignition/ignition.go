@@ -96,7 +96,7 @@ func Find_storage_idx(tc string,destpath string) int {
                return(idx)
                }
             }
-        return(-1) // For append
+        return(len(files)) // For append
 }
 
 func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath string) int {
@@ -116,20 +116,13 @@ func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath 
                 log.Printf("Add_base64_file: Failed(%s) - %s->%s\n",err,jsonpath, filetoadd, destpath)
 		return(-1)
                 }
-        bcontent := base64.StdEncoding.EncodeToString(content)
-        je := `{"filesystem": "",
-                "path": "",
-                "mode": 420,
-                "contents" : {
-                  "source" : "",
-                  "verification" : {}
-                  }
-                }`
-       sjson.Set(je,"path",destpath)
-       sjson.Set(je,"contents.source","data:text/plain;charset=utf-8;base64," + bcontent)
+       bcontent := base64.StdEncoding.EncodeToString(content)
        idx := Find_storage_idx(js,destpath)
        vname := "storage.files." + strconv.Itoa(idx)
-       sjson.Set(js, vname, je)
+       js,_ = sjson.Set(js,vname + ".contents.source", "data:text/plain;charset=utf-8;base64," + bcontent)
+       js,_ = sjson.Set(js,vname + ".mode", 420)
+       js,_ = sjson.Set(js,vname + ".filesystem", "")
+       js,_ = sjson.Set(js,vname + ".path", destpath )
        d := []byte(js)
        err = ioutil.WriteFile(jsonpath, d, 0644)
        if (err != nil){
