@@ -64,6 +64,25 @@ func Find_storage_idx(tc string,destpath string) int {
         return(len(files)) // For append
 }
 
+func Get_ignition_dir(jsonpath string) [] string {
+var dir []string
+
+	jsb, err := ioutil.ReadFile(jsonpath)
+	if (err != nil) {
+		return(dir)
+                }
+        js := string(jsb)
+	result := gjson.Get(js,"storage.files")
+        files := result.Array()
+         for _,tfile := range files {
+            tpath := gjson.Get(tfile.String(),"path").String()
+            dir = append(dir,tpath)
+            }
+        return(dir) 
+
+
+}
+
 func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath string) int {
 
         if (IsDirectory(filetoadd)){

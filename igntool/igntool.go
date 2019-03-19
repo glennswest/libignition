@@ -20,6 +20,12 @@ func main(){
           dpath := "/" + fname
           log.Printf("Adding %s to %s\n",fname,aname)
           Add_base64_file(aname, fname, "", dpath)
+     case "ls": // Directory
+          aname := args[1]
+          files := Get_ignition_dir(aname)
+          for _, fname := range files {
+              log.Printf(" %s\n",fname)
+              }
      default:
           log.Printf("igntool: Invalid command\n")
           help();
