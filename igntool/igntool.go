@@ -22,6 +22,7 @@ func main(){
           Add_base64_file(aname, fname, "", dpath)
      case "ls": // Directory
           aname := args[1]
+          log.Printf("Directory of %s\n",aname)
           files := Get_ignition_dir(aname)
           for _, fname := range files {
               log.Printf(" %s\n",fname)
