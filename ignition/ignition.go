@@ -72,6 +72,7 @@ func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath 
                                         if (path == filetoadd){
                                            return nil
                                            }
+                                        log.Printf("Adding %s\n",path)
                                         Add_base64_file(jsonpath,path,destfs,"/" + path)
                                         return nil
                                                  })
