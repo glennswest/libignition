@@ -69,7 +69,10 @@ func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath 
         if (IsDirectory(filetoadd)){
            log.Printf("Adding Directory %s\n",filetoadd)
            filepath.Walk(filetoadd, func(path string, info os.FileInfo, err error) error {
-                                        Add_base64_file(jsonpath,path,destfs,path)
+                                        if (path == filetoadd){
+                                           return nil
+                                           }
+                                        Add_base64_file(jsonpath,path,destfs,"/" + path)
                                         return nil
                                                  })
            return 0
