@@ -106,7 +106,6 @@ func Update_metadata_file(jsonpath string, metapath string) int {
 func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath string) int {
 
         if (IsDirectory(filetoadd)){
-           log.Printf("Adding Directory %s\n",filetoadd)
            filepath.Walk(filetoadd, func(path string, info os.FileInfo, err error) error {
                                         if (path == filetoadd){
                                            return nil
