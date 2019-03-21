@@ -83,6 +83,26 @@ var dir []string
 
 }
 
+func Update_metadata_file(jsonpath string, metapath string) int {
+
+
+        meb, err := ioutil.ReadFile(metapath)
+        if (err != nil) {
+                log.Printf("Update_metadata_file: Failed to read metadata(%s) - %s\n",err,metapath, jsonpath)
+                return(-1)
+                }
+        me := string(meb)
+        thefiles := Get_ignition_dir(jsonpath)
+        me,_ = sjson.Set(me,".files",thefiles)
+        d := []byte(me)
+        err = ioutil.WriteFile(metapath, d, 0644)
+        if (err != nil){
+           log.Printf("Error: Add_metadata_file %s Failed - %s\n",metapath,err)
+           return(-1)
+           }
+        return(0)
+}
+
 func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath string) int {
 
         if (IsDirectory(filetoadd)){

@@ -14,6 +14,11 @@ func main(){
   args := os.Args[1:]
   mode := args[0];
   switch(mode){
+     case "um": // Update metadata file
+          aname := args[1]
+          fname := args[2]
+          log.Printf("Updating Metadata %s\n",fname)
+          Update_metadata_file(aname,fname)
      case "a": // Add file
           aname := args[1]
           fname := args[2]
