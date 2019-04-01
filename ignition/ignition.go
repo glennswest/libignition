@@ -93,7 +93,7 @@ func Update_metadata_file(jsonpath string, metapath string) int {
                 }
         me := string(meb)
         thefiles := Get_ignition_dir(jsonpath)
-        me,_ = sjson.Set(me,".files",thefiles)
+        me,_ = sjson.Set(me,"files",thefiles)
         d := []byte(me)
         err = ioutil.WriteFile(metapath, d, 0644)
         if (err != nil){
