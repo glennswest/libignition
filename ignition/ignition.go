@@ -209,7 +209,7 @@ func Parse_ignition_file(thefilepath string) int {
     b, err :=ioutil.ReadFile(thefilepath);
     if err != nil {
       fmt.Print(err);
-      return 0;
+      return -1;
       }
     content := string(b);
     result := Parse_ignition_string(content);
