@@ -19,6 +19,12 @@ func main(){
           fname := args[2]
           log.Printf("Updating Metadata %s\n",fname)
           Update_metadata_file(aname,fname)
+     case "ar": // Add Remote file
+          aname := args[1]
+          url   := args[2]
+          dpath := args[3]
+          log.Printf("Adding %s to %s as %s\n",url,aname,dpath)
+          Add_remote_file(aname, url, "", dpath)
      case "a": // Add file
           aname := args[1]
           fname := args[2]

@@ -147,6 +147,32 @@ func Add_base64_file(jsonpath string, filetoadd string, destfs string, destpath 
        return(0)
 }
 
+func Add_remote_file(jsonpath string, httptoadd string, destfs string, destpath string) int {
+
+        if (file_is_exists(jsonpath) == false){
+           New_ignition_file(jsonpath)
+           }
+        jsb, err := ioutil.ReadFile(jsonpath)
+        if (err != nil) {
+                log.Printf("Add_remote_file: Failed to read json(%s) - %s->%s\n",err,jsonpath, httptoadd, destpath)
+                return(-1)
+                }
+       js := string(jsb)
+
+       idx := Find_storage_idx(js,destpath)
+       vname := "storage.files." + strconv.Itoa(idx)
+       js,_ = sjson.Set(js,vname + ".contents.source", httptoadd)
+       js,_ = sjson.Set(js,vname + ".mode", 420)
+       js,_ = sjson.Set(js,vname + ".filesystem", "")
+       js,_ = sjson.Set(js,vname + ".path", destpath )
+       d := []byte(js)
+       err = ioutil.WriteFile(jsonpath, d, 0644)
+       if (err != nil){
+           log.Printf("Error: Add_base64_file %s Failed - %s\n",jsonpath,err)
+           return(-1)
+           }
+       return(0)
+}
 
 func Parse_ignition_string(tc string) int {
 	version := gjson.Get(tc, "ignition.version");
