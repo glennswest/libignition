@@ -38,6 +38,13 @@ func main(){
           for _, fname := range files {
               log.Printf(" %s\n",fname)
               }
+     case "lsx": // Directory
+          aname := args[1]
+          log.Printf("Directory of %s\n",aname)
+          files := Get_ignition_dir_noremote(aname)
+          for _, fname := range files {
+              log.Printf(" %s\n",fname)
+              }
      default:
           log.Printf("igntool: Invalid command\n")
           help();

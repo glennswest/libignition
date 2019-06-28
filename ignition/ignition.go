@@ -83,6 +83,29 @@ var dir []string
 
 }
 
+func Get_ignition_dir_noremote(jsonpath string) [] string {
+var dir []string
+
+        jsb, err := ioutil.ReadFile(jsonpath)
+        if (err != nil) {
+                return(dir)
+                }
+        js := string(jsb)
+        result := gjson.Get(js,"storage.files")
+        files := result.Array()
+         for _,tfile := range files {
+            tpath := gjson.Get(tfile.String(),"path").String()
+            source := gjson.Get(tfile.String(),"contents.source").String()
+            thetype := source[0:4]
+            if (thetype != "http"){
+               dir = append(dir,tpath)
+               }
+            }
+        return(dir)
+
+
+}
+
 func Update_metadata_file(jsonpath string, metapath string) int {
 
 
@@ -92,7 +115,7 @@ func Update_metadata_file(jsonpath string, metapath string) int {
                 return(-1)
                 }
         me := string(meb)
-        thefiles := Get_ignition_dir(jsonpath)
+        thefiles := Get_ignition_dir_noremote(jsonpath)
         me,_ = sjson.Set(me,"files",thefiles)
         d := []byte(me)
         err = ioutil.WriteFile(metapath, d, 0644)
