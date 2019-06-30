@@ -17,7 +17,7 @@ func main(){
      case "x": 
           fname := args[1]
           apath :=  args[2]
-          Parse_ignition_string(fname,apath) 
+          Parse_ignition_file(fname,apath) 
      case "um": // Update metadata file
           aname := args[1]
           fname := args[2]
