@@ -197,7 +197,7 @@ func Add_remote_file(jsonpath string, httptoadd string, destfs string, destpath 
        return(0)
 }
 
-func Parse_ignition_string(tc string) int {
+func Parse_ignition_string(tc string,bp string) int {
 	version := gjson.Get(tc, "ignition.version");
         if (version.String() == ""){
            fmt.Printf("Invalid file");
@@ -206,7 +206,7 @@ func Parse_ignition_string(tc string) int {
         result := gjson.Get(tc,"storage.files");
         files := result.Array();
         for _,tfile := range files {
-            tpath := gjson.Get(tfile.String(),"path").String();
+            tpath := bp + gjson.Get(tfile.String(),"path").String();
             tmode := gjson.Get(tfile.String(),"mode").Int();
             tdata := gjson.Get(tfile.String(),"contents.source").String();
             idx := strings.Index(tdata,":")+1;
@@ -253,7 +253,7 @@ func Parse_ignition_string(tc string) int {
         return(0);
 }
 
-func Parse_ignition_file(thefilepath string) int {
+func Parse_ignition_file(thefilepath string,thebasepath string) int {
 
     b, err :=ioutil.ReadFile(thefilepath);
     if err != nil {
@@ -261,7 +261,7 @@ func Parse_ignition_file(thefilepath string) int {
       return -1;
       }
     content := string(b);
-    result := Parse_ignition_string(content);
+    result := Parse_ignition_string(content,thebasepath);
     return(result);
 
 }

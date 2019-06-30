@@ -14,6 +14,10 @@ func main(){
   args := os.Args[1:]
   mode := args[0];
   switch(mode){
+     case "x": 
+          fname := args[1]
+          apath :=  args[2]
+          Parse_ignition_string(fname,apath) 
      case "um": // Update metadata file
           aname := args[1]
           fname := args[2]
