@@ -211,11 +211,8 @@ func Parse_ignition_string(tc string,bp string) int {
             tdata := gjson.Get(tfile.String(),"contents.source").String();
             idx := strings.Index(tdata,":")+1;
             thetype := tdata[:idx];
-            fmt.Printf("path: %s type: %s mode %o\n",tpath,thetype,tmode);
             tdir := filepath.Dir(tpath);
-            fmt.Printf("%s\n",tdir);
             os.MkdirAll(tdir, os.ModePerm);
-            fmt.Printf("Type: path: %s type: %s mode %o\n",tpath,thetype,tmode);
             switch thetype {
                case "data:":
                     cidx := strings.Index(tdata,",");
@@ -223,7 +220,6 @@ func Parse_ignition_string(tc string,bp string) int {
                     if (strings.Contains(dtype,"base64")){
                        dtype = "base64";
                        }
-                    fmt.Printf("Dtype=%s\n",dtype);
                     switch dtype {
                         case "":
                           untc,_ := url.QueryUnescape(tdata[cidx+1:]);
